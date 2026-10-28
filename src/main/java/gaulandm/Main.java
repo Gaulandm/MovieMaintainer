@@ -1,21 +1,12 @@
 package gaulandm;
 
+
 import javax.swing.*;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
     static void main() {
-            JFrame frame = new JFrame("Testing");
-
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-
-            frame.setContentPane(new MenuPanel());
-
-            frame.setVisible(true);
-
-            frame.pack();
-            frame.setSize(800, 400);
+        SwingUtilities.invokeLater(MenuPanel::createAndShowGUI);
     }
 }
