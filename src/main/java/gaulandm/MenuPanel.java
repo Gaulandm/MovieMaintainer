@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.*;
 import java.util.List;
 
@@ -21,11 +22,17 @@ public class MenuPanel extends JPanel implements ActionListener {
 
     private final User currentUser;
 
-    public MenuPanel() {
+    public MenuPanel() throws IOException, ClassNotFoundException {
         options.put("Movies", this::actionMovies);
         options.put("My registrations", this::myRegistrations);
         options.put("Change user", this::changeUser);
-        options.put("Exit", () -> System.exit(0) );
+        options.put("Exit", () -> {
+            try {
+                exit();
+            } catch (Exception e) {
+                System.out.println("Error occurred!");
+            }
+        });
 
         registrationsFilter = new ArrayList<>();
         registrationsFilter.add("Remove");
@@ -56,6 +63,12 @@ public class MenuPanel extends JPanel implements ActionListener {
         add(button);
     }
 
+    private void exit() throws IOException {
+
+        table.saveMovies();
+        System.exit(0);
+    }
+
     private void changeUser() {
         ChangeUserNameDialog dialog = new ChangeUserNameDialog(frame, currentUser);
 
@@ -67,6 +80,7 @@ public class MenuPanel extends JPanel implements ActionListener {
     private void actionMovies() {
 
         table.getAllMovies();
+        table.refreshCreateButton();
 
         if (currentUser.isOperator()) {
             table.setFilter(null);
@@ -83,6 +97,7 @@ public class MenuPanel extends JPanel implements ActionListener {
     private void myRegistrations() {
 
         table.getRegisteredMovies(currentUser);
+        table.refreshCreateButton();
 
         table.setFilter(registrationsFilter);
 
@@ -91,7 +106,7 @@ public class MenuPanel extends JPanel implements ActionListener {
         frame.repaint();
     }
 
-    public static void createAndShowGUI() {
+    public static void createAndShowGUI() throws IOException, ClassNotFoundException {
         frame = new JFrame(title);
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

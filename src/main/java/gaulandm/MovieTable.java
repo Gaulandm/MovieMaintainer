@@ -8,9 +8,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 public class MovieTable extends JPanel implements ActionListener {
@@ -18,26 +17,27 @@ public class MovieTable extends JPanel implements ActionListener {
     private final JTable table;
     private final JPanel menuPane;
     private final JFrame frame;
+    private final MoviesLoader loader;
+    private final User currentUser;
+    private final JPanel bottomPane;
+    private final JButton button;
 
     private final List<Movie> movies;
 
-    public MovieTable(JFrame frame, JPanel menuPane, User current_user) {
+    public MovieTable(JFrame frame, JPanel menuPane, User currentUser) throws IOException, ClassNotFoundException {
         super(new BorderLayout());
+        this.loader = new MoviesLoader();
         this.frame = frame;
+        this.currentUser = currentUser;
         this.menuPane = menuPane;
+        this.bottomPane = new JPanel(new GridLayout(1, 0));
+        this.button= new JButton("Create");
 
-        movies = new ArrayList<>();
 
-        movies.add(new Movie("Spiderman", "RBK34", new GregorianCalendar(2026, Calendar.NOVEMBER, 30, 14, 0, 0).getTime(), 3));
-
-        movies.getFirst().addUser("anyad");
-        movies.getFirst().addUser("anyad2");
-        movies.getFirst().addUser("anyad3");
-
-        movies.add(new Movie("Superman", "RB45K3",  new GregorianCalendar(2026, Calendar.NOVEMBER, 20, 16, 0, 0).getTime(), 20));
+        movies = loader.load();
 
         table = new JTable();
-        MovieTableModel model = new MovieTableModel(movies, null, current_user);
+        MovieTableModel model = new MovieTableModel(movies, null, currentUser);
         table.setModel(model);
         table.setDefaultRenderer(JButton.class, new ButtonRenderer());
         ButtonEditor buttonEditor = new ButtonEditor(model, frame);
@@ -47,24 +47,19 @@ public class MovieTable extends JPanel implements ActionListener {
         JScrollPane pane = new JScrollPane(table);
         table.setFillsViewportHeight(true);
 
-        JPanel bottomPane = new JPanel(new GridLayout(1, 0));
-
         JButton back = new JButton("Back");
         back.addActionListener(this);
 
-        if (current_user.isOperator()) {
-            JButton create = new JButton("Create");
-            create.addActionListener(buttonEditor);
-            create.setActionCommand("Create -1");
-            bottomPane.add(create);
-        }
-
-
+        button.addActionListener(buttonEditor);
+        button.setActionCommand("Create -1");
 
         bottomPane.add(back);
 
         add(pane, BorderLayout.CENTER);
         add(bottomPane, BorderLayout.PAGE_END);
+    }
+    public void saveMovies() throws IOException {
+        loader.save(movies);
     }
 
     public void setFilter(List<String> filter) {
@@ -85,6 +80,16 @@ public class MovieTable extends JPanel implements ActionListener {
 
     public void getAllMovies() {
         ((MovieTableModel)table.getModel()).setMovies(movies);
+    }
+
+    public void refreshCreateButton() {
+        if (currentUser.isOperator()) {
+
+            bottomPane.add(button);
+        }
+        else {
+            bottomPane.remove(button);
+        }
     }
 
     @Override

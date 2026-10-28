@@ -1,11 +1,12 @@
 package gaulandm;
 
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class Movie {
+public class Movie implements Serializable {
     private String title;
     private String room;
     private Date date;

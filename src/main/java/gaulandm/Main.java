@@ -7,6 +7,12 @@ import javax.swing.*;
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
     static void main() {
-        SwingUtilities.invokeLater(MenuPanel::createAndShowGUI);
+        SwingUtilities.invokeLater(() -> {
+            try {
+                MenuPanel.createAndShowGUI();
+            } catch (Exception e) {
+                System.out.println("Error occurred!");
+            }
+        });
     }
 }
