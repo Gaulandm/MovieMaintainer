@@ -6,12 +6,16 @@ import java.util.Date;
 import java.util.List;
 
 public class Movie {
-    private final String title;
-    private final String room;
-    private final Date date;
+    private String title;
+    private String room;
+    private Date date;
 
-    private final int max;
+    private int max;
     private final List<User> registeredUsers;
+
+    public Movie() {
+        this("", "", new Date(), 0);
+    }
 
     public Movie(String title, String room, Date date, int max) {
         this.title = title;
@@ -29,9 +33,17 @@ public class Movie {
         registeredUsers.removeIf((registeredUser) -> registeredUser.getName().equals(name));
     }
 
+    public void removeUser(int index) {
+        registeredUsers.remove(index);
+    }
+
     public void addUser(String name) {
         if (isRegistered(name)) {
             //TODO Exception handling
+            return;
+        }
+
+        if (registeredUsers.size() >= max) {
             return;
         }
         registeredUsers.add(new User(name));
@@ -39,6 +51,22 @@ public class Movie {
 
     public String getTitle() {
         return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setMax(int max) {
+        this.max = max;
+    }
+
+    public void setRoom(String room) {
+        this.room = room;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     public String getRoom() {
@@ -58,6 +86,10 @@ public class Movie {
     }
 
     public boolean isRegistered(String name) {
+
+        if (registeredUsers.isEmpty()) {
+            return false;
+        }
 
         for (User registeredUser : registeredUsers) {
             if (registeredUser.getName().equals(name)) {

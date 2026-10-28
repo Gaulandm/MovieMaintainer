@@ -1,7 +1,5 @@
 package gaulandm;
 
-import gaulandm.table_model.MovieTableModel;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -11,18 +9,34 @@ import java.util.List;
 
 public class MenuPanel extends JPanel implements ActionListener {
 
+    private final MovieTable table;
+
     private static JFrame frame;
 
     private static final String title = "Movie Maintainer";
 
-    private static final HashMap<String, Command> options = new HashMap<>() {{
-        put("Movies", MenuPanel::actionMovies);
-        put("My registrations", () -> { });
-        put("Change user", () -> { });
-        put("Exit", () -> System.exit(0) );
-    }};
+    private static final HashMap<String, Command> options = new HashMap<>();
+
+    private static List<String> registrationsFilter;
+
+    private final User currentUser;
 
     public MenuPanel() {
+        options.put("Movies", this::actionMovies);
+        options.put("My registrations", this::myRegistrations);
+        options.put("Change user", this::changeUser);
+        options.put("Exit", () -> System.exit(0) );
+
+        registrationsFilter = new ArrayList<>();
+        registrationsFilter.add("Remove");
+        registrationsFilter.add("Update");
+        registrationsFilter.add("SeeUsers");
+
+
+        currentUser = new User("test");
+
+        table = new MovieTable(frame, this, currentUser);
+
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 
         JLabel titleLabel = new JLabel(title);
@@ -42,26 +56,37 @@ public class MenuPanel extends JPanel implements ActionListener {
         add(button);
     }
 
-    private static void actionMovies() {
-        List<Movie> movies = new ArrayList<>();
+    private void changeUser() {
+        ChangeUserNameDialog dialog = new ChangeUserNameDialog(frame, currentUser);
 
+        dialog.setLocationRelativeTo(frame);
+        dialog.setResizable(false);
+        dialog.setVisible(true);
+    }
 
+    private void actionMovies() {
 
-        movies.add(new Movie("Spiderman", "RBK34", new GregorianCalendar(2026, Calendar.NOVEMBER, 30, 14, 0, 0).getTime(), 20));
+        table.getAllMovies();
 
-        movies.getFirst().addUser("anyad");
-        movies.getFirst().addUser("anyad2");
-        movies.getFirst().addUser("anyad3");
+        if (currentUser.isOperator()) {
+            table.setFilter(null);
+        }
+        else {
+            table.setFilter(registrationsFilter);
+        }
 
-        movies.add(new Movie("Superman", "RB45K3",  new GregorianCalendar(2026, Calendar.NOVEMBER, 20, 16, 0, 0).getTime(), 20));
+        frame.setContentPane(table);
+        frame.pack();
+        frame.repaint();
+    }
 
-        JTable table = new JTable();
-        table.setModel(new MovieTableModel(movies, null, new User("anyad")));
+    private void myRegistrations() {
 
-        JScrollPane scrollPane = new JScrollPane(table);
-        table.setFillsViewportHeight(true);
+        table.getRegisteredMovies(currentUser);
 
-        frame.setContentPane(scrollPane);
+        table.setFilter(registrationsFilter);
+
+        frame.setContentPane(table);
         frame.pack();
         frame.repaint();
     }
