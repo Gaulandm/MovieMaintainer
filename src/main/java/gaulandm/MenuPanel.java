@@ -1,5 +1,7 @@
 package gaulandm;
 
+import gaulandm.table_model.MovieTableModel;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -46,14 +48,15 @@ public class MenuPanel extends JPanel implements ActionListener {
 
 
         movies.add(new Movie("Spiderman", "RBK34", new GregorianCalendar(2026, Calendar.NOVEMBER, 30, 14, 0, 0).getTime(), 20));
-        movies.getFirst().addUser(new User("anyad"));
-        movies.getFirst().addUser(new User("anyad2"));
-        movies.getFirst().addUser(new User("anyad3"));
+
+        movies.getFirst().addUser("anyad");
+        movies.getFirst().addUser("anyad2");
+        movies.getFirst().addUser("anyad3");
 
         movies.add(new Movie("Superman", "RB45K3",  new GregorianCalendar(2026, Calendar.NOVEMBER, 20, 16, 0, 0).getTime(), 20));
 
         JTable table = new JTable();
-        table.setModel(new MovieTableModel(movies, null));
+        table.setModel(new MovieTableModel(movies, null, new User("anyad")));
 
         JScrollPane scrollPane = new JScrollPane(table);
         table.setFillsViewportHeight(true);

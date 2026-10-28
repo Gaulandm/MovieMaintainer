@@ -7,15 +7,15 @@ public class User {
         name = _name;
     }
 
-    boolean isOperator() {
+    public boolean isOperator() {
         return name.equals("gaulandm");
     }
 
-    void setName(String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
-    String getName() {
+    public String getName() {
         return name;
     }
 

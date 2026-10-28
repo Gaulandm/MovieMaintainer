@@ -22,32 +22,49 @@ public class Movie {
         registeredUsers = new ArrayList<>();
     }
 
-    void removeUser(User us) {
-        registeredUsers.remove(us);
+
+
+    public void removeUser(String name) {
+
+        registeredUsers.removeIf((registeredUser) -> registeredUser.getName().equals(name));
     }
 
-    void addUser(User us) {
-        registeredUsers.add(us);
+    public void addUser(String name) {
+        if (isRegistered(name)) {
+            //TODO Exception handling
+            return;
+        }
+        registeredUsers.add(new User(name));
     }
 
-    String getTitle() {
+    public String getTitle() {
         return title;
     }
 
-    String getRoom() {
+    public String getRoom() {
         return room;
     }
 
-    Date getDate() {
+    public Date getDate() {
         return date;
     }
 
-    int getMaxUsers() {
+    public int getMaxUsers() {
         return max;
     }
 
-    List<User> getUsers() {
+    public List<User> getUsers() {
         return registeredUsers;
+    }
+
+    public boolean isRegistered(String name) {
+
+        for (User registeredUser : registeredUsers) {
+            if (registeredUser.getName().equals(name)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 
